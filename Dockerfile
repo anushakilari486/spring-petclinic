@@ -1,11 +1,13 @@
 FROM alpine/git as clone
+RUN mkdir /app
 WORKDIR /app
-RUN git clone https://github.com/anushakilari486/petclinic.git
-FROM maven:3.5-jdk-8-alpine as build
+RUN git clone https://github.com/anushakilari486/spring-petclinic.git
+FROM maven:latest as build
 WORKDIR /app
-COPY --from=clone /app/petclinic /app
-RUN mvn install
-FROM openjdk:8-jre-alpine
+COPY --from=clone /app/spring-petclinic /app
+RUN mvn install -DskipTests
+FROM openjdk:latest
 WORKDIR /app
-COPY --from=build /app/target/petclinic-1.0.1.jar /app
-CMD ["java -jar petclinic-1.0.1.jar"]
+COPY --from=build /app/target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar /app
+CMD ["java -jar spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar"]
+
